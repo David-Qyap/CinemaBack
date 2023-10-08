@@ -1,35 +1,36 @@
-import jwt from 'jsonwebtoken';
-import HttpError from 'http-errors';
+import jwt from 'jsonwebtoken'
+import HttpError from 'http-errors'
 
-const { JWT_SECRET } = process.env;
+// eslint-disable-next-line no-undef
+const { JWT_SECRET } = process.env
 
 const EXCLUDE = [
-  'POST:/users/login',
-  'POST:/users/register',
-  'GET:/users/activate',
-];
+    'POST:/users/login',
+    'POST:/users/register',
+    'GET:/users/activate',
+]
 
 export default function authorization(req, res, next) {
-  try {
-    if (req.method === 'OPTIONS') {
-      next();
-      return;
-    }
+    try {
+        if (req.method === 'OPTIONS') {
+            next()
+            return
+        }
 
-    if (EXCLUDE.includes(`${req.method}:${req.path}`)) {
-      next();
-      return;
-    }
-    const token = req.headers.authorization || req.query.token || '';
-    const data = jwt.verify(token.replace('Bearer ', ''), JWT_SECRET);
+        if (EXCLUDE.includes(`${req.method}:${req.path}`)) {
+            next()
+            return
+        }
+        const token = req.headers.authorization || req.query.token || ''
+        const data = jwt.verify(token.replace('Bearer ', ''), JWT_SECRET)
 
-    if (!data.userId) {
-      throw HttpError(401);
+        if (!data.userId) {
+            throw HttpError(401)
+        }
+        req.userId = data.userId
+        next()
+    } catch (e) {
+        e.status = 401
+        next(e)
     }
-    req.userId = data.userId;
-    next();
-  } catch (e) {
-    e.status = 401;
-    next(e);
-  }
 }

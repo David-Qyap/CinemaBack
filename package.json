@@ -9,9 +9,9 @@
     ]
   },
   "env": {
-  "node": true,
-  "commonjs": true
-},
+    "node": true,
+    "commonjs": true
+  },
   "scripts": {
     "start": "nodemon --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js",
     "prod": "node --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js",
@@ -38,21 +38,22 @@
     "nodemailer": "^6.9.3",
     "nodemon": "^2.0.22",
     "os": "^0.1.2",
+    "prettier": "^3.0.3",
     "sequelize": "^6.32.0",
     "sharp": "^0.32.5",
     "uuid": "^9.0.0",
     "uuidv4": "^6.2.13"
-  },
-  "devDependencies": {
-    "eslint": "^7.32.0 || ^8.2.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-react": "^7.33.2"
   },
   "nodemonConfig": {
     "ignore": [
       "data/*",
       "sessions/*"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^8.51.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-prettier": "^5.0.0"
   }
 }

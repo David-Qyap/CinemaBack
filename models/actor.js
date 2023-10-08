@@ -1,5 +1,5 @@
-import { Model, DataTypes } from 'sequelize';
-import sequelize from '../services/sequelize';
+import { Model, DataTypes } from 'sequelize'
+import sequelize from '../services/sequelize'
 
 class Actor extends Model {
 
@@ -15,6 +15,9 @@ Actor.init(
         actor_name: {
             type: DataTypes.STRING,
         },
+        photo_url:{
+            type: DataTypes.STRING,
+        }
     },
     {
         sequelize,
@@ -22,6 +25,7 @@ Actor.init(
         tableName: 'Actors',
         timestamps: false,
     }
-);
+)
 
-export default Actor;
+
+export default Actor
