@@ -16,10 +16,7 @@ class Users extends Model {
     static list = async (page =1, limit = 20) => {
         try {
             const usersList = await Users.findAll();
-            console.log(typeof usersList);
-
             const users = _.chunk(usersList, limit)[page - 1] || [];
-
             const userEmails = users.map(user => user.email);
             return userEmails;
         } catch (e) {

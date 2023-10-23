@@ -5,10 +5,20 @@ import Tickets from './Tickets';
 import Actor from'./actor';
 import Reviews from './Reviews';
 import ShowTime from './ShowTime';
-import Showtime from './ShowTime';
+import _ from 'lodash';
 
 class Movies extends Model {
-
+    static list = async (page =1, limit = 20,movieList) => {
+        try {
+            const movies = _.chunk(movieList, limit)[page - 1] || [];
+            const moviesData = movies.map(user => user);
+            console.log(moviesData);
+            return moviesData;
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    };
 }
 
 Movies.init(

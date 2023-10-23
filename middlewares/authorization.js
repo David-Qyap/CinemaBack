@@ -30,7 +30,7 @@ export default function authorization(req, res, next) {
         req.userId = data.userId;
 
         if (req.user && req.user.isAdmin === 1) {
-            next(); // Разрешаем доступ к маршрут
+            next();
         } else {
             throw HttpError(403);
         }

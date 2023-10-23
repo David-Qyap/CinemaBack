@@ -132,11 +132,12 @@ class UsersController {
             if (!user) {
                 throw HttpError(401, 'invalid email or password1');
             }
-            if (user.status !== 'active') {
-                throw HttpError(401, 'User not acitve');
-            }
             if (user.status === 'blocked') {
                 throw HttpError(401, 'User Blocked');
+            }
+
+            if (user.status !== 'active') {
+                throw HttpError(401, 'User not active');
             }
 
             const token = jwt.sign({ userId: user.id }, JWT_SECRET, {});
@@ -339,7 +340,6 @@ class UsersController {
         try {
             const {title ,movie_id} = req.query;
             let movies=[];
-            console.log(movie_id,title);
 
             if (title){
                 movies = await Movies.findAll({

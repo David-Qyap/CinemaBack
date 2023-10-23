@@ -189,29 +189,57 @@ class AdminController {
     };
     static findMovie = async (req, res, next) => {
         try {
-            const {title} = req.query;
-
-            const movies = await Movies.findAll({
-                where: {
-                    title:   {
-                        $like: `%${title}%`
+            const {title,page = 1,movie_id} = req.query;
+           
+            let movieList=null;
+            if (title){
+                movieList = await Movies.findAll({
+                    where: {
+                        title:   {
+                            $like: `%${title}%`
+                        },
                     },
-                },
-                include:[{
-                    model:Actor,
-                    as: 'actors'
-                },
-                {
-                    model:Categories,
-                    as: 'categories'
-                }
-                ]
+                    include:[{
+                        model:Actor,
+                        as: 'actors'
+                    },
+                    {
+                        model:Categories,
+                        as: 'categories'
+                    },
+                    {
+                        model:Reviews,
+                        as:'reviews'
+                    }
+                    ]
+                });
 
-            });
-            console.log(movies);
+            }
+            if (movie_id) {
+                movieList = await Movies.findAll({
+                    where: {
+                        movie_id,
+                    },
+                    include:[{
+                        model:Actor,
+                        as: 'actors'
+                    },
+                    {
+                        model:Categories,
+                        as: 'categories'
+                    },
+                    {
+                        model:Reviews,
+                        as:'reviews'
+                    }
+                    ]
+                });
+            }
+            const limit=20;
+            const  moviesData = await Movies.list(+page,limit,movieList);
             res.json({
                 status: 'ok',
-                movies,
+                moviesData,
             });
         } catch (e) {
             next(e);
