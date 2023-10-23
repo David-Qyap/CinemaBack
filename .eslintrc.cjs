@@ -1,14 +1,12 @@
 module.exports = {
     'env': {
         'browser': true,
-        'es2021': true
+        'es2021': true,
+        'node':true
     },
     'extends': 'eslint:recommended',
     'overrides': [
         {
-            'env': {
-                'node': true
-            },
             'files': [
                 '.eslintrc.{js,cjs}'
             ],
@@ -36,7 +34,7 @@ module.exports = {
         ],
         'semi': [
             'error',
-            'never'
+            'always'
         ]
     }
 }

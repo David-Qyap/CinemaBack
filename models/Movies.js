@@ -1,8 +1,11 @@
-import { DataTypes, Model } from 'sequelize'
-import sequelize from '../services/sequelize'
-import Category from './Categories'
-import Tickets from './Tickets'
-import Actor from'./actor'
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../services/sequelize';
+import Category from './Categories';
+import Tickets from './Tickets';
+import Actor from'./actor';
+import Reviews from './Reviews';
+import ShowTime from './ShowTime';
+import Showtime from './ShowTime';
 
 class Movies extends Model {
 
@@ -43,34 +46,50 @@ Movies.init(
         tableName: 'Movies',
         timestamps: false,
     },
-)
+);
 Movies.hasMany(Category, {
     foreignKey: 'movie_id',
-    as: 'Categories',
-})
+    as: 'categories',
+});
 
 Category.belongsToMany(Movies, {
     foreignKey: 'movie_id',
     through: 'MovieCategories',
-    as: 'Movies',
-})
+    as: 'categories',
+});
 Movies.hasMany(Tickets, {
     foreignKey: 'movie_id',
     as: 'movie_tickets',
-})
+});
+
 Tickets.belongsTo(Movies, {
     foreignKey: 'movie_id',
-})
+});
 Actor.hasMany(Movies, {
     foreignKey: 'movie_id',
     as: 'actors',
-})
+});
 
 Movies.belongsToMany(Actor,{
     through: 'MovieActors',
     foreignKey: 'movie_id',
     as: 'actors',
-})
+});
+Movies.hasMany(Reviews, {
+    foreignKey: 'movie_id',
+    as: 'reviews'
+});
 
-
-export default Movies
+Reviews.belongsTo(Movies, {
+    foreignKey: 'movie_id',
+    as: 'movie_reviews'
+});
+Movies.belongsTo(ShowTime, {
+    foreignKey: 'movie_id',
+    as: 'showtimes',
+});
+ShowTime.hasMany(Movies, {
+    foreignKey: 'movie_id',
+    as: 'showtimes',
+});
+export default Movies;

@@ -8,10 +8,7 @@
       "./*.js"
     ]
   },
-  "env": {
-    "node": true,
-    "commonjs": true
-  },
+
   "scripts": {
     "start": "nodemon --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js",
     "prod": "node --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js",
@@ -47,7 +44,7 @@
   "nodemonConfig": {
     "ignore": [
       "data/*",
-      "sessions/*"
+      "public/*"
     ]
   },
   "devDependencies": {

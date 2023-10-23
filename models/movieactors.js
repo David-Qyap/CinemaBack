@@ -1,5 +1,5 @@
-import {DataTypes, Model,} from 'sequelize'
-import sequelize from '../services/sequelize.js'
+import {DataTypes, Model,} from 'sequelize';
+import sequelize from '../services/sequelize';
 
 
 
@@ -39,5 +39,5 @@ MovieActors.init(
         tableName: 'MovieActors',
         timestamps: false,
     },
-)
-export default MovieActors
+);
+export default MovieActors;

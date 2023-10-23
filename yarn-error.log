@@ -38,8 +38,8 @@ npm manifest:
       ]
     },
     "scripts": {
-      "start": "nodemon --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js",
-      "prod": "node --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js",
+      "start": "nodemon --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js.js.js",
+      "prod": "node --es-module-specifier-resolution=node -r dotenv/config ./bin/www.js.js.js",
       "migrate": "node --es-module-specifier-resolution=node -r dotenv/config ./bin/migrate.js"
     },
     "dependencies": {

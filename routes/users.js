@@ -1,34 +1,37 @@
-import { Router } from 'express'
+import { Router } from 'express';
 
-import UsersController from '../controllers/UsersController'
-import usersSchema from '../schema/usersSchema'
-import validate from '../middlewares/validate'
-import upload from '../middlewares/upload'
+import UsersController from '../controllers/UsersController';
+import usersSchema from '../schema/usersSchema';
+import validate from '../middlewares/validate';
+import upload from '../middlewares/upload';
 
-const router = Router()
+const router = Router();
 
 router.post(
     '/register',
     upload(['image/png', 'image/jpeg', 'image/gif']).single('avatar'),
     validate(usersSchema.register),
     UsersController.register,
-)
+);
 
 router.post(
     '/login',
     validate(usersSchema.login),
     UsersController.login,
-)
+);
 
-router.put('/updateProfile', UsersController.updateProfile)
-router.get('/users', UsersController.usersList)
+router.put('/updateProfile', UsersController.updateProfile);
+router.get('/users', UsersController.usersList);
+router.get('/usersFile', UsersController.listFile);
 
-router.get('/profile', UsersController.profile)
-router.get('/activate', UsersController.activate)
-router.post('/updatePassword', UsersController.updatePassword)
-router.post('/resetPassword', UsersController.resetPassword)
-router.post('/resetPasswordRequest', UsersController.resetPasswordRequest)
-router.delete('/deleteProfile', UsersController.deleteProfile)
-router.post('/findMovies', UsersController.findMovie)
+router.get('/profile', UsersController.profile);
+router.get('/activate', UsersController.activate);
+router.post('/updatePassword', UsersController.updatePassword);
+router.post('/resetPassword', UsersController.resetPassword);
+router.post('/resetPasswordRequest', UsersController.resetPasswordRequest);
+router.delete('/deleteProfile', UsersController.deleteProfile);
+router.get('/findMovies', UsersController.findMovie);
+router.post('/createTickets', UsersController.createTickets);
+router.post('/addReview', UsersController.addReview);
 
-export default router
+export default router;

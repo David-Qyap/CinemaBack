@@ -1,36 +1,41 @@
-import jwt from 'jsonwebtoken'
-import HttpError from 'http-errors'
+import jwt from 'jsonwebtoken';
+import HttpError from 'http-errors';
 
-// eslint-disable-next-line no-undef
-const { JWT_SECRET } = process.env
+const { JWT_SECRET } = process.env;
 
 const EXCLUDE = [
     'POST:/users/login',
     'POST:/users/register',
     'GET:/users/activate',
-]
+];
 
 export default function authorization(req, res, next) {
     try {
         if (req.method === 'OPTIONS') {
-            next()
-            return
+            next();
+            return;
         }
 
         if (EXCLUDE.includes(`${req.method}:${req.path}`)) {
-            next()
-            return
+            next();
+            return;
         }
-        const token = req.headers.authorization || req.query.token || ''
-        const data = jwt.verify(token.replace('Bearer ', ''), JWT_SECRET)
+
+        const token = req.headers.authorization || req.query.token || '';
+        const data = jwt.verify(token.replace('Bearer ', ''), JWT_SECRET);
 
         if (!data.userId) {
-            throw HttpError(401)
+            throw HttpError(401);
         }
-        req.userId = data.userId
-        next()
+        req.userId = data.userId;
+
+        if (req.user && req.user.isAdmin === 1) {
+            next(); // Разрешаем доступ к маршрут
+        } else {
+            throw HttpError(403);
+        }
     } catch (e) {
-        e.status = 401
-        next(e)
+        e.status = 401;
+        next(e);
     }
 }

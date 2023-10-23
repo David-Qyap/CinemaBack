@@ -23,20 +23,21 @@ app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  next(createError(404));
+    next(createError(404));
 });
 
 // error handler
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  // render the error page
-  res.status(err.status || 500);
-  res.json({
-    status: 'error',
-    message: err.message,
-    stack: err.stack,
-    errors: err.errors,
-  });
+    // render the error page
+    res.status(err.status || 500);
+    res.json({
+        status: 'error',
+        message: err.message,
+        stack: err.stack,
+        errors: err.errors,
+    });
 });
 
 export default app;
+
