@@ -27,7 +27,6 @@ class AdminController {
                 date
             } = req.body;
             let photoPath=null;
-            console.log(date);
             if (file) {
                 photoPath = path.join('/images/moviePhoto', uuidv4() + '-' + file.originalname);
                 await Promise.all([
@@ -114,7 +113,9 @@ class AdminController {
                     actor_name
                 }
             });
-
+            if(!actor_name) {
+                throw new HttpError(404, 'Actor_name empty');
+            }
             if (!existingActor) {
                 if (file) {
                     photoPath = path.join('/images/actorPhoto', uuidv4() + '-' + file.originalname);
@@ -155,12 +156,26 @@ class AdminController {
             const {
                 date
             } = req.body;
-            await Showtime.create({
-                movie_id,
-                date,
+            const movie = await Movies.findOne({
+                where:{
+                    movie_id
+                }
             });
+            console.log(movie);
+            if(!movie){
+                throw new HttpError(404, 'Movie not found');
+            }
+            if(movie_id && date){
+                await Showtime.create({
+                    movie_id,
+                    date,
+                });
+                res.json({
+                    status:'ok111111'
+                });
+            }
             res.json({
-                status:'ok'
+                status:'error'
             });
         }catch (e) {
             next(e); 
@@ -305,7 +320,6 @@ class AdminController {
         try {
             const { movie_id } = req.query;
             const movie = await Movies.findByPk(movie_id);
-            console.log(movie);
             if (!movie) {
                 throw new HttpError(404, 'User not found');
             }

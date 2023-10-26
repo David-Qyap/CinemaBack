@@ -12,7 +12,7 @@ const debug = Debug('app:www');
  * Get port from environment and store in Express.
  */
 
-const port = +process.env.PORT || '4000';
+const port =  '4000';
 app.set('port', port);
 
 /**

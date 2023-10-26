@@ -11,6 +11,8 @@ import Tickets from '../models/Tickets.js';
 import {Reviews} from '../models/index.js';
 import Actor from '../models/actor.js';
 import Categories from '../models/Categories.js';
+import Card from '../models/creditCard';
+import sequelize from '../services/sequelize.js';
 const { JWT_SECRET, API_URL,PASSWORD_SECRET } = process.env;
 function generateResetCode() {
     const code = cryptoRandomString({ length: 8, type: 'numeric' });
@@ -20,9 +22,11 @@ function generateResetCode() {
 
 class UsersController {
     static register = async (req, res, next) => {
+        const t = await sequelize.transaction();
         try {
             const {
                 firstName, lastName, email, password, city, country, address, phone,
+                cardNumber, cardholderName, expirationDate, cvv,
             } = req.body;
             const { file } = req;
             const existingUser = await Users.findOne({
@@ -35,7 +39,6 @@ class UsersController {
 
             if (file) {
                 avatar = path.join('/images/actorPhoto', uuidv4() + '-' + file.originalname);
-                // fs.renameSync(file.path, path.resolve(path.join('./public', actorPhoto)));
                 await Promise.all([
                     sharp(file.path)
                         .rotate()
@@ -51,7 +54,6 @@ class UsersController {
                         .toFile(path.resolve(path.join('./public', avatar + '.webp')))
                 ]);
             }
-
             const user = await Users.create({
                 firstName,
                 lastName,
@@ -62,12 +64,19 @@ class UsersController {
                 phone,
                 avatar,
                 password: Users.passwordHash(password),
-            });
-
+            },{ transaction: t });
+            const creditCard = await Card.create({
+                cardNumber,
+                cardholderName,
+                expirationDate,
+                cvv,
+            }, { transaction: t });
             const activationToken = jwt.sign({ email }, JWT_SECRET);
 
             user.activationToken = activationToken;
+            await user.setCreditCard(creditCard, { transaction: t });
 
+            await t.commit();
 
             await user.save();
             const activationUrl = `${API_URL}?activationToken=${activationToken}`;
@@ -83,6 +92,7 @@ class UsersController {
                 user,
             });
         } catch (e) {
+            await t.rollback();
             next(e);
         }
     };
@@ -123,6 +133,9 @@ class UsersController {
     static login = async (req, res, next) => {
         try {
             const { email, password } = req.body;
+            if(!email || !password){
+                throw HttpError(401, 'invalid email or password');
+            }
             const user = await Users.findOne({
                 where: {
                     email,
@@ -130,7 +143,7 @@ class UsersController {
                 },
             });
             if (!user) {
-                throw HttpError(401, 'invalid email or password1');
+                throw HttpError(401, 'invalid email or password');
             }
             if (user.status === 'blocked') {
                 throw HttpError(401, 'User Blocked');
@@ -153,6 +166,9 @@ class UsersController {
     static profile = async (req, res, next) => {
         try {
             const userId = req.query.userId || req.userId;
+            if(!userId){
+                throw new HttpError(404, 'userId is empty');
+            }
             const user = await Users.findOne({
                 where: {
                     user_id: userId,
@@ -174,6 +190,9 @@ class UsersController {
     static updateProfile = async (req, res, next) => {
         try {
             const { userId } = req.query;
+            if(!userId){
+                throw new HttpError(404, 'userId is empty');
+            }
             const user = await Users.findOne({
                 where: {
                     user_id: userId,
@@ -207,6 +226,9 @@ class UsersController {
     static deleteProfile = async (req, res, next) => {
         try {
             const { userId } = req.query;
+            if(!userId){
+                throw new HttpError(404, 'userId is empty');
+            }
             const user = await Users.findByPk(userId);
 
             if (!user) {
@@ -226,6 +248,9 @@ class UsersController {
     static usersList = async (req, res, next) => {
         try {
             const {user_id,page} = req.query || req;
+            if(!user_id ){
+                throw HttpError(404, 'userId is empty');
+            }
             const user = await Users.findOne({ where: { user_id } });
             let userEmails=null;
             let status= 'ok';
@@ -246,6 +271,9 @@ class UsersController {
     static listFile = async (req, res, next) => {
         try {
             const { user_id } = req.query || req;
+            if(!user_id ){
+                throw HttpError(404, 'userId is empty');
+            }
             const user = await Users.findOne({ where: { user_id } });
 
             const filePath =path.join( path.resolve(),'public\\mails\\userEmails.txt');
@@ -265,7 +293,9 @@ class UsersController {
     static updatePassword = async (req, res, next) => {
         try {
             const { email, currentPassword, newPassword } = req.body;
-
+            if(!email){
+                throw HttpError(404, 'email is empty');
+            }
             const user = await Users.findOne({ where: { email } });
 
             if (!user) {
@@ -466,7 +496,7 @@ class UsersController {
                     rating,
                     comment
                 });
-                console.log(reviews);
+
 
                 res.json({
                     status: 'ok',

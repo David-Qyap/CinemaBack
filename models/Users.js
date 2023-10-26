@@ -2,9 +2,9 @@ import { Model, DataTypes } from 'sequelize';
 import md5 from 'md5';
 import fs from 'fs';
 import sequelize from '../services/sequelize';
-import CreditCard from './creditCard';
 import Tickets from './Tickets';
 import Reviews from './Reviews';
+import creditCard from './creditCard';
 import _ from 'lodash';
 import path from 'path';
 
@@ -121,13 +121,7 @@ Users.init(
         allowNull: false,
     },
 );
-Users.hasMany(CreditCard, {
-    foreignKey: 'user_id',
-    as: 'CreditCard',
-});
-CreditCard.belongsTo(Users, {
-    foreignKey: 'user_id',
-});
+
 Users.hasMany(Tickets, {
     foreignKey: 'user_id',
     as: 'Ticket',
@@ -140,6 +134,13 @@ Users.hasMany(Reviews, {
     as: 'Rew',
 });
 Reviews.belongsTo(Users, {
+    foreignKey: 'user_id',
+});
+Users.hasMany(creditCard, {
+    foreignKey: 'user_id',
+    as: 'CreditCard',
+});
+creditCard.belongsTo(Users, {
     foreignKey: 'user_id',
 });
 
